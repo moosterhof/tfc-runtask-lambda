@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/moosterhof/tf-runtask-opa-lambda/src/handler"
+	"github.com/moosterhof/tfc-runtask-opa-lambda/src/opa/handler"
 )
 
 func main() {
