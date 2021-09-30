@@ -12,7 +12,9 @@ provider "aws" {
   default_tags {
     tags = {
       Terraform = "yes"
-      Environment = locals.environment
+      Environment = local.environment
+      TTL = 14
+      Owner = "moosterhof"
     }
   }
 }
@@ -31,7 +33,7 @@ locals {
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "../bin/hello"
-  output_path = "bin/hello.zip"
+  output_path = "../bin/hello.zip"
 }
 
 /*
