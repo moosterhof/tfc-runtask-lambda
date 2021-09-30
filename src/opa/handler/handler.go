@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/hmac"
-	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/json"
 	//	"errors"
 	"fmt"
@@ -88,7 +88,7 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 	signature := request.Headers["X-Tfc-Event-Hook-Signature"]
 	log.Print("HMAC header: ", signature)
 
-	mac := hmac.New(sha256.New, []byte(l.hmacKey))
+	mac := hmac.New(sha512.New, []byte(l.hmacKey))
 	mac.Write([]byte(request.Body))
 	expectedMAC := mac.Sum(nil)
 	match := hmac.Equal([]byte(signature), expectedMAC)
