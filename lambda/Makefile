@@ -9,13 +9,13 @@ test:
 
 
 # Invoking function with event file
-$ sam local invoke "Ratings" -e event.json
+# $ sam local invoke "Ratings" -e event.json
 
 # Invoking function with event via stdin
-$ echo '{"message": "Hey, are you there?" }' | sam local invoke --event - "Ratings"
+# $ echo '{"message": "Hey, are you there?" }' | sam local invoke --event - "Ratings"
 
 # For more options
-$ sam local invoke --help
+# $ sam local invoke --help
 
 
 # nix-env -i nix-env -i aws-sam-cli
