@@ -1,9 +1,9 @@
-all:
+all: lambda
 
 macos:
 	go build
 
-aws:
+lambda:
 	env GOOS=linux GOARCH=amd64 go build -o ../../bin/opa-handler
 
 clean:
