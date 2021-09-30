@@ -184,7 +184,7 @@ resource "aws_api_gateway_resource" "endpoint" {
 resource "aws_api_gateway_method" "endpoint" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.endpoint.id
-  http_method   = "GET"
+  http_method   = "POST"
   authorization = "NONE"
 }
 
