@@ -19,12 +19,17 @@ provider "aws" {
   }
 }
 
+resource "random_id" "app-server-id" {
+  prefix      = ""
+  byte_length = 8
+}
+
 data "aws_caller_identity" "current" {}
 
 locals {
   account_id     = data.aws_caller_identity.current.account_id
   environment    = "dev"
-  lambda_handler = "opa-handler"
+  lambda_handler = var.lambda_handler
   name           = "go-lambda-terraform-setup"
   random_name    = "Morty"
   region         = var.region
