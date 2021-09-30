@@ -10,6 +10,7 @@ import (
     "github.com/open-policy-agent/opa/loader"
     "github.com/open-policy-agent/opa/rego"
     "github.com/open-policy-agent/opa/storage"
+    "encoding/json"
     "log"
     "time"
 )
