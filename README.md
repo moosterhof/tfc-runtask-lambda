@@ -1,5 +1,7 @@
 # Terraform Run Task validation through OPA
 
+** Work in progress **
+
 This repository utilizes the new Terraform Cloud Run Task mechanism to perform an OPA policy check as part of an apply workflow.
 
 https://www.hashicorp.com/blog/terraform-cloud-run-tasks-beta-now-available
