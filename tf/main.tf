@@ -19,7 +19,7 @@ provider "aws" {
   }
 }
 
-resource "random_id" "app-server-id" {
+resource "random_id" "hmac_key" {
   prefix      = ""
   byte_length = 8
 }
@@ -32,7 +32,7 @@ locals {
   lambda_handler = var.lambda_handler
   name           = "go-lambda-terraform-setup"
   region         = var.region
-  hmac_key       = random_id.app-server-id.hex
+  hmac_key       = random_id.hmac_key.hex
 }
 
 data "archive_file" "lambda_zip" {
@@ -240,7 +240,7 @@ resource "aws_api_gateway_deployment" "api" {
   depends_on = [aws_api_gateway_integration_response.endpoint]
 
   rest_api_id = aws_api_gateway_rest_api.api.id
-  description = "Deployed endpoint at ${timestamp()}"
+  description = ""
 }
 
 resource "aws_api_gateway_stage" "api" {
