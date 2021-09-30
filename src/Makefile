@@ -1,7 +1,10 @@
-all: go
+all:
 
-go:
+macos:
 	go build
+
+aws:
+	env GOOS=linux GOARCH=amd64 go build -o ../bin/handler
 
 # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-invoke.html
 test:
