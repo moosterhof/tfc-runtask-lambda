@@ -31,8 +31,8 @@ locals {
   environment    = "dev"
   lambda_handler = var.lambda_handler
   name           = "go-lambda-terraform-setup"
-  random_name    = "Morty"
   region         = var.region
+  hmac_key       = random_id.app-server-id.hex
 }
 
 data "archive_file" "lambda_zip" {
@@ -117,7 +117,7 @@ resource "aws_lambda_function" "func" {
 
   environment {
     variables = {
-      RANDOM_NAME = local.random_name
+      HMAC_KEY = local.hmac_key
     }
   }
 }
