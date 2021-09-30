@@ -9,6 +9,12 @@ terraform {
 
 provider "aws" {
   region = var.region
+  default_tags {
+    tags = {
+      Terraform = "yes"
+      Environment = locals.environment
+    }
+  }
 }
 
 data "aws_caller_identity" "current" {}
@@ -19,7 +25,7 @@ locals {
   lambda_handler = "hello"
   name           = "go-lambda-terraform-setup"
   random_name    = "Morty"
-  region         = "us-east-1"
+  region         = var.region
 }
 
 data "archive_file" "lambda_zip" {
