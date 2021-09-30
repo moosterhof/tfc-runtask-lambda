@@ -1,7 +1,10 @@
 .PHONY: all
 all: build
 
-local:
+.PHONY: local
+local: opa
+
+opa:
 	go build
 
 .PHONY: build
@@ -12,12 +15,12 @@ build: ../../bin/opa-handler
 
 .PHONY: clean
 clean:
-	rm -f ../../bin/opa-handler
+	rm -f ../../bin/opa-handler opa
 
 # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-invoke.html
 .PHONY: test
-test:
-	./tfruntask-lambda-opa
+test: opa
+	./opa
 
 
 # Invoking function with event file
@@ -28,7 +31,3 @@ test:
 
 # For more options
 # $ sam local invoke --help
-
-
-# nix-env -i nix-env -i aws-sam-cli
-#
