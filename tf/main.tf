@@ -11,10 +11,10 @@ provider "aws" {
   region = var.region
   default_tags {
     tags = {
-      Terraform = "yes"
+      Terraform   = "yes"
       Environment = local.environment
-      TTL = 14
-      Owner = "moosterhof"
+      TTL         = 14
+      Owner       = "moosterhof"
     }
   }
 }
@@ -30,7 +30,7 @@ locals {
   account_id     = data.aws_caller_identity.current.account_id
   environment    = "dev"
   lambda_handler = var.lambda_handler
-  name           = "go-lambda-terraform-setup"
+  name           = "terraform-run-task"
   region         = var.region
   hmac_key       = random_id.hmac_key.hex
 }
@@ -188,6 +188,17 @@ resource "aws_api_gateway_method" "endpoint" {
   authorization = "NONE"
 }
 
+resource "aws_api_gateway_method_settings" "path_specific" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = aws_api_gateway_stage.stage.stage_name
+  method_path = "${local.lambda_handler}/POST"
+
+  settings {
+    //    metrics_enabled = true
+    //    logging_level   = "INFO"
+  }
+}
+
 resource "aws_api_gateway_method_response" "endpoint" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   resource_id = aws_api_gateway_resource.endpoint.id
@@ -243,7 +254,8 @@ resource "aws_api_gateway_deployment" "api" {
   description = ""
 }
 
-resource "aws_api_gateway_stage" "api" {
+resource "aws_api_gateway_stage" "stage" {
+  description   = "Stage ${local.environment}"
   stage_name    = local.environment
   rest_api_id   = aws_api_gateway_rest_api.api.id
   deployment_id = aws_api_gateway_deployment.api.id
