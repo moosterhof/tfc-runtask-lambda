@@ -1,15 +1,21 @@
-all: lambda
+.PHONY: all
+all: build
 
-macos:
+local:
 	go build
 
-lambda:
+.PHONY: build
+build: ../../bin/opa-handler
+
+../../bin/opa-handler:
 	env GOOS=linux GOARCH=amd64 go build -o ../../bin/opa-handler
 
+.PHONY: clean
 clean:
 	rm -f ../../bin/opa-handler
 
 # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-using-invoke.html
+.PHONY: test
 test:
 	./tfruntask-lambda-opa
 
