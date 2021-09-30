@@ -5,13 +5,13 @@ import (
 )
 
 type config struct {
-	randomName string
+	hmacKey string
 }
 
 // NewConfigFromEnv -
 func NewConfigFromEnv() *config {
 
 	return &config{
-		randomName: os.Getenv("RANDOM_NAME"),
+		hmacKey: os.Getenv("HMAC_KEY"),
 	}
 }
