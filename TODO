@@ -1,1 +1,2 @@
 [x] API gateway needs to pass custom header with HMAC
+[x] refactor hmac check as authorization lambda

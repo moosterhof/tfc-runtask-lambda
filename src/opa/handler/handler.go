@@ -3,6 +3,8 @@ package handler
 import (
 	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
 	"encoding/json"
 	//	"errors"
 	"fmt"
@@ -54,35 +56,48 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 	log.Print("Request headers: ", request.Headers)
 
 	/*
-		we can get 2 types of POSTs, a test POST to test the handler, should return 200
-		and a full test, both should return 200 or and one off 'pass/fail'
-		the test request body looks like this:
-		   {
-		       "payload_version": 1,
-		       "access_token": "test-token",
-		       "task_result_id": "taskrs-xxxxxxxxxxxxxxxx",
-		       "task_result_enforcement_level": "test",
-		       "task_result_callback_url": "https://app.terraform.io/api/v2/task-results/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/callback",
-		       "run_app_url": "https://app.terraform.io/app/test-org/test-workspace/runs/run-xxxxxxxxxxxxxxxx",
-		       "run_id": "run-xxxxxxxxxxxxxxxx",
-		       "run_message": "Test run message",
-		       "run_created_at": "2021-01-01T00:00:00.000Z",
-		       "run_created_by": "test-user",
-		       "workspace_id": "ws-xxxxxxxxxxxxxxxx",
-		       "workspace_name": "test-workspace",
-		       "workspace_app_url": "https://app.terraform.io/app/test-org/test-workspace",
-		       "organization_name": "test-org",
-		       "plan_json_api_url": "https://app.terraform.io/api/v2/plans/plan-xxxxxxxxxxxxxxxx/json-output",
-		       "vcs_repo_url": "https://github.com/test-org/test-repo",
-		       "vcs_branch": "main",
-		       "vcs_pull_request_url": "https://github.com/test-org/test-repo/pull/1",
-		       "vcs_commit_url": "https://github.com/test-org/test-repo/commit/1234567sha"
-		   }
+				we can get 2 types of POSTs, a test POST to test the handler, should return 200
+				and a full test, both should return 200 or and one off 'pass/fail'
+		                the test request does not have a HMAC signature header
+				the test request body looks like this:
+				   {
+				       "payload_version": 1,
+				       "access_token": "test-token",
+				       "task_result_id": "taskrs-xxxxxxxxxxxxxxxx",
+				       "task_result_enforcement_level": "test",
+				       "task_result_callback_url": "https://app.terraform.io/api/v2/task-results/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/callback",
+				       "run_app_url": "https://app.terraform.io/app/test-org/test-workspace/runs/run-xxxxxxxxxxxxxxxx",
+				       "run_id": "run-xxxxxxxxxxxxxxxx",
+				       "run_message": "Test run message",
+				       "run_created_at": "2021-01-01T00:00:00.000Z",
+				       "run_created_by": "test-user",
+				       "workspace_id": "ws-xxxxxxxxxxxxxxxx",
+				       "workspace_name": "test-workspace",
+				       "workspace_app_url": "https://app.terraform.io/app/test-org/test-workspace",
+				       "organization_name": "test-org",
+				       "plan_json_api_url": "https://app.terraform.io/api/v2/plans/plan-xxxxxxxxxxxxxxxx/json-output",
+				       "vcs_repo_url": "https://github.com/test-org/test-repo",
+				       "vcs_branch": "main",
+				       "vcs_pull_request_url": "https://github.com/test-org/test-repo/pull/1",
+				       "vcs_commit_url": "https://github.com/test-org/test-repo/commit/1234567sha"
+				   }
 	*/
 
 	// this is the HMAC for the request, if available
-	hmac := request.Headers["x-tfc-event-hook-signature"]
-	log.Print("HMAC header: ", hmac)
+	// case is like: X-Tfc-Event-Hook-Signature
+	signature := request.Headers["X-Tfc-Event-Hook-Signature"]
+	log.Print("HMAC header: ", signature)
+
+	mac := hmac.New(sha256.New, []byte(l.hmacKey))
+	mac.Write([]byte(request.Body))
+	expectedMAC := mac.Sum(nil)
+	match := hmac.Equal([]byte(signature), expectedMAC)
+
+	if match {
+		log.Print("VALID MAC")
+	} else {
+		log.Print("WRONG MAC")
+	}
 
 	// verify HMAC here
 	//verify := verifyhmac(request.Body, hmac, hmacKey)
@@ -98,7 +113,7 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 
 	if r.access_token == "test-token" {
 		log.Print("Detected new run task registration through test request")
-		return buildResponse(LambdaResponse{ Message: "Test Request Accepted", })
+		return buildResponse(LambdaResponse{Message: "Test Request Accepted"})
 	}
 
 	lambdaResponse := LambdaResponse{
