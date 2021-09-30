@@ -4,7 +4,7 @@ all: build
 .PHONY: local
 local: opa
 
-opa:
+opa: main.go handler/handler.go
 	go build
 
 .PHONY: build
