@@ -3,5 +3,5 @@ output "api_url" {
 }
 
 output "hmac_key" {
-  value = random_id.app-server-id.hex
+  value = local.hmac_key
 }
