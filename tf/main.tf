@@ -186,6 +186,9 @@ resource "aws_api_gateway_method" "endpoint" {
   resource_id   = aws_api_gateway_resource.endpoint.id
   http_method   = "POST"
   authorization = "NONE"
+  request_parameters = {
+    "method.request.header.x-tfc-event-hook-signature" = false
+  }
 }
 
 resource "aws_api_gateway_method_settings" "path_specific" {
@@ -215,6 +218,7 @@ resource "aws_api_gateway_integration" "endpoint" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.func.invoke_arn
+  request_parameters      = { "integration.request.header.x-tfc-event-hook-signature" = "method.request.header.x-tfc-event-hook-signature" }
 }
 
 resource "aws_api_gateway_integration_response" "endpoint" {
