@@ -6,7 +6,6 @@ import (
 	"crypto/sha512"
 	"encoding/json"
 	//	"errors"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -119,9 +118,8 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 	err = json.Unmarshal([]byte(request.Body), &r)
 	if err != nil {
 		log.Print("json unmarshall error: ", err)
-		return Response{Body: err.Error(), StatusCode: 404}, nil
+		return Response{Body: err.Error(), StatusCode: 500}, nil
 	}
-        log.Print("body: ###"+fmt.Sprint(r)+"###")
 
 	log.Print("access token: " + r.Access_token)
 	log.Print("task_result_callback_url: " + r.Task_result_callback_url)
@@ -129,34 +127,17 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 
 	if r.Access_token == "test-token" {
 		log.Print("Detected new run task registration through test request")
+                // NO CHECK IS EXECUTED
 		return buildResponse(LambdaResponse{Message: "Test Request Accepted"})
-	} else {
-		log.Print("normal task accepted")
 	}
 
-	lambdaResponse := LambdaResponse{
-		Message: "Hello " + fmt.Sprint(request.Body),
-	}
+        // ACTUAL CHECK HAPPENS HERE
 
-	response, err := json.Marshal(lambdaResponse)
-	res := Response{
-		StatusCode:      200,
-		IsBase64Encoded: false,
-		Headers: map[string]string{
-			"Access-Control-Allow-Origin":      "*",
-			"Access-Control-Allow-Credentials": "true",
-			"Cache-Control":                    "no-cache; no-store",
-			"Content-Type":                     "application/json",
-			"Content-Security-Policy":          "default-src self",
-			"Strict-Transport-Security":        "max-age=31536000; includeSubDomains",
-			"X-Content-Type-Options":           "nosniff",
-			"X-XSS-Protection":                 "1; mode=block",
-			"X-Frame-Options":                  "DENY",
-		},
-		Body: string(response),
-	}
+        passed := true
+        message := "testing 1 2 3"
+        tfcCallback(message, passed, r.Task_result_callback_url, r.Access_token)
 
-	return res, err
+        return buildResponse(LambdaResponse{Message: "Request Accepted"})
 }
 
 func buildResponse(lambdaResponse LambdaResponse) (Response, error) {
