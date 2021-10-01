@@ -198,7 +198,7 @@ func TFCget(url string) {
 		log.Fatalln(err)
 	}
 
-	log.Println(string(body))
+	log.Print(string(body))
 
 	return
 }
@@ -233,10 +233,18 @@ func tfcCallback(message string, pass bool, url string, token string) {
 
 	payload := "{ \"data\": { \"type\": \"task-results\", \"attributes\": { \"status\": \"" + status + "\", \"message\": \"" + string(message) + "\"} } }"
 
-	resp, err := http.NewRequest("PATCH", url, strings.NewReader(payload))
-	resp.Header.Set("Content-Type", "application/json")
-	resp.Header.Set("Authorization", "Bearer "+token)
+        log.Print("Payload: ###", payload, "###")
+        log.Print("URL: ###", url, "###")
+        log.Print("Token: ###", token, "###")
 
+        client := &http.Client{}
+	req, err := http.NewRequest("PATCH", url, strings.NewReader(payload))
+	req.Header.Set("Content-Type", "application/vnd.api+json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+        log.Print("request: ###", req, "###")
+
+        resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -245,8 +253,8 @@ func tfcCallback(message string, pass bool, url string, token string) {
 
 	json.NewDecoder(resp.Body).Decode(&result)
 
-	log.Println(result)
-	log.Println(result["data"])
+	log.Print(result)
+	log.Print(result["data"])
 }
 
 // NewLambdaHandler -
