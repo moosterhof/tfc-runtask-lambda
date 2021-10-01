@@ -44,31 +44,31 @@ type LambdaResponse struct {
 	Message string
 }
 
-type TFCRunTask struct {
-	payload_version               int
-	access_token                  string
-	task_result_id                string
-	task_result_enforcement_level string
-	task_result_callback_url      string
-	run_app_url                   string
-	run_id                        string
-	run_message                   string
-	run_created_at                string
-	run_created_by                string
-	workspace_id                  string
-	workspace_name                string
-	workspace_app_url             string
-	organization_name             string
-	plan_json_api_url             string
-	vcs_repo_url                  string
-	vcs_branch                    string
-	vcs_pull_request_url          string
-	vcs_commit_url                string
+type RequestBody struct {
+	Payload_version               float64  `json:"payload_version"`
+	Access_token                  string   `json:"access_token"`
+	Task_result_id                string   `json:"task_result_id"`
+	Task_result_enforcement_level string   `json:"task_result_enforcement_level"`
+	Task_result_callback_url      string   `json:"task_result_callback_url"`
+	Run_app_url                   string   `json:"run_app_url"`
+	Run_id                        string   `json:"run_id"`
+	Run_message                   string   `json:"run_message"`
+	Run_created_at                string   `json:"run_created_at"`
+	Run_created_by                string   `json:"run_created_by"`
+	Workspace_id                  string   `json:"workspace_id"`
+	Workspace_name                string   `json:"workspace_name"`
+	Workspace_app_url             string   `json:"workspace_app_url"`
+	Organization_name             string   `json:"organization_name"`
+	Plan_json_api_url             string   `json:"plan_json_api_url"`
+	Vcs_repo_url                  string   `json:"vcs_repo_url"`
+	Vcs_branch                    string   `json:"vcs_branch"`
+	Vcs_pull_request_url          string   `json:"vcs_pull_request_url"`
+	Vcs_commit_url                string   `json:"vcs_commit_url"`
 }
 
 func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
 
-	log.Print("OPA Lambda starting", request.Body)
+	log.Print("OPA Lambda starting")
 	log.Print("Request body: ###", request.Body, "###")
 	log.Print("Request headers: ###", request.Headers, "###")
 
@@ -115,17 +115,19 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 		   }
 	*/
 
-	var r TFCRunTask
+	var r RequestBody
 	err = json.Unmarshal([]byte(request.Body), &r)
 	if err != nil {
-		log.Print("json decoding error: ", err)
+		log.Print("json unmarshall error: ", err)
+		return Response{Body: err.Error(), StatusCode: 404}, nil
 	}
+        log.Print("body: ###"+fmt.Sprint(r)+"###")
 
-	log.Print("access token: " + r.access_token)
-	log.Print("task_result_callback_url: " + r.task_result_callback_url)
-	log.Print("plan_json_api_url: " + r.plan_json_api_url)
+	log.Print("access token: " + r.Access_token)
+	log.Print("task_result_callback_url: " + r.Task_result_callback_url)
+	log.Print("plan_json_api_url: " + r.Plan_json_api_url)
 
-	if r.access_token == "test-token" {
+	if r.Access_token == "test-token" {
 		log.Print("Detected new run task registration through test request")
 		return buildResponse(LambdaResponse{Message: "Test Request Accepted"})
 	} else {
