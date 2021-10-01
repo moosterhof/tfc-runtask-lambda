@@ -1,2 +1,3 @@
 [x] API gateway needs to pass custom header with HMAC
-[x] refactor hmac check as authorization lambda
+[ ] refactor hmac check as authorization Lambda
+[ ] split policy evaluation into separate Lambda
