@@ -235,7 +235,7 @@ func tfcCallback(message string, pass bool, url string, token string) {
 
 	log.Print("request: ###", req, "###")
 
-	resp, err := client.Do(req)
+	_, err = client.Do(req)
 	if err != nil {
 		log.Fatalln(err)
 	}
