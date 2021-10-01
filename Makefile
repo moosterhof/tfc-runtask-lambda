@@ -1,5 +1,11 @@
+SUBDIRS := src/opa tf
+
 .PHONY: all
-all: test
+all: $(SUBDIRS)
+
+.PHONY: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 .PHONY: test
 test:
