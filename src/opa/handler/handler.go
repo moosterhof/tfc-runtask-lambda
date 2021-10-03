@@ -137,6 +137,14 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 
 	// ACTUAL CHECK HAPPENS HERE
 
+        plan, err := TFCget(r.Plan_json_api_url, r.Access_token)
+        if err != nil {
+            log.Print("could not retrieve plan: ", err)
+            return Response{Body: err.Error(), StatusCode: 500}, nil
+        }
+
+        log.Print("Plan: ", plan)
+
 	passed := true
 	message := "testing 1 2 3"
 	tfcCallback(message, passed, r.Task_result_callback_url, r.Access_token)
