@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/sha512"
+	"encoding/hex"
 	"encoding/json"
 	//	"errors"
 	"io/ioutil"
@@ -76,11 +77,12 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 	signature := request.Headers["X-Tfc-Event-Hook-Signature"]
 	log.Print("HMAC header: ###", signature, "###")
 	log.Print("HMAC key: ###", l.hmacKey, "###")
+	actualMAC, _ := hex.DecodeString(signature)
 
 	mac := hmac.New(sha512.New, []byte(l.hmacKey))
 	mac.Write([]byte(request.Body))
 	expectedMAC := mac.Sum(nil)
-	match := hmac.Equal([]byte(signature), expectedMAC)
+	match := hmac.Equal([]byte(actualMAC), expectedMAC)
 
 	if match {
 		log.Print("VALID MAC")
