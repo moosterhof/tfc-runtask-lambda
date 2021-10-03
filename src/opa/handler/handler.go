@@ -186,25 +186,27 @@ func init() {
 }
 
 // This GET's additional information from TFC
-func TFCget(url string) {
+func TFCget(url string, token string) (string, error) {
 
-	resp, err := http.Get(url)
-	// TODO: need token here?
-	// resp.Header.Set("Authorization", "Bearer "+token)
+        client := http.Client{}
+        req , err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	req.Header.Set("Authorization", "Bearer "+token)
 
-	defer resp.Body.Close()
+        res , err := client.Do(req)
+        if err != nil {
+		log.Fatalln(err)
+        }
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	log.Print(string(body))
 
-	return
+	return string(body), err
 }
 
 // This PATCH'es the output back to TFC
