@@ -12,3 +12,7 @@ https://www.terraform.io/docs/cloud/integrations/run-tasks/index.html#run-tasks-
 
 The Lambda handler is in src/handler
 And the entire project can be deployed through a `terraform apply` in the `tf` directory.
+
+It would be logical to use a Lambda Authorizer for authorization,
+but these Lambda's do not receive the full request body. Hence the
+authorization is built into the main lambda function.
