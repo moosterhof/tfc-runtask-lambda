@@ -88,6 +88,7 @@ func (l lambdaHandler) Run(ctx context.Context, request events.APIGatewayProxyRe
 		log.Print("VALID MAC")
 	} else {
 		log.Print("INCORRECT MAC")
+		return Response{Body: "incorrect MAC", StatusCode: 403}, nil
 	}
 
 	/*
