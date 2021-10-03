@@ -1,3 +1,4 @@
 [x] API gateway needs to pass custom header with HMAC
 [ ] refactor hmac check as authorization Lambda
 [ ] split policy evaluation into separate Lambda
+[ ] arm64 lambda? also needs to recompilation
