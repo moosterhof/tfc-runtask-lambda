@@ -3,7 +3,7 @@
 ** Work in progress **
 
 This repository utilizes the new Terraform Cloud Run Task mechanism
-to perform an OPA policy check in AWS Lambda as part of an apply
+to perform a policy check through AWS Lambda as part of an apply
 workflow.
 
 https://www.hashicorp.com/blog/terraform-cloud-run-tasks-beta-now-available
